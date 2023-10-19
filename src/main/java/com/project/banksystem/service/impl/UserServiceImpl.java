@@ -14,6 +14,8 @@ public class UserServiceImpl implements UserService {
         User newUser = User.builder()
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
+                .otherName(userRequest.getOtherName())
+                .gender(userRequest.getGender())
                 .build();
     }
 }
