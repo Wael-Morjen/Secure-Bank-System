@@ -16,6 +16,9 @@ public class UserServiceImpl implements UserService {
                 .lastName(userRequest.getLastName())
                 .otherName(userRequest.getOtherName())
                 .gender(userRequest.getGender())
+                .address(userRequest.getAddress())
+                .StateOfOrigin(userRequest.getStateOfOrigin())
+                .accountNumber()
                 .build();
     }
 }
