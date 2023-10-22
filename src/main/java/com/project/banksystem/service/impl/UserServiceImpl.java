@@ -1,9 +1,6 @@
 package com.project.banksystem.service.impl;
 
-import com.project.banksystem.dto.AccountInfo;
-import com.project.banksystem.dto.BankResponse;
-import com.project.banksystem.dto.EmailDetails;
-import com.project.banksystem.dto.UserRequest;
+import com.project.banksystem.dto.*;
 import com.project.banksystem.entity.User;
 import com.project.banksystem.repository.UserRepository;
 import com.project.banksystem.utils.AccountUtils;
@@ -70,4 +67,33 @@ public class UserServiceImpl implements UserService {
     }
 
     //TODO: Balance Enquiry, name Enquiry, credit, debit, transfer
+    @Override
+    public BankResponse balanceEnquiry(EnquiryRequest request) {
+        // Check if the provided account number exist in the DB
+        boolean isAccountExist = userRepository.existByAccountNumber(request.getAccountNumber());
+        if (!isAccountExist) {
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User foundUser = userRepository.findByAccountNumber(request.getAccountNumber());
+        return BankResponse.builder()
+                .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_FOUND_MESSAGE)
+                .accountInfo(AccountInfo.builder()
+                        .accountBalance(foundUser.getAccountBalance())
+                        .accountNumber(request.getAccountNumber())
+                        .accountName(foundUser.getFirstName() + " " + foundUser.getLastName())
+                        .build())
+                .build();
+    }
+
+    @Override
+    public String nameEnquiry(EnquiryRequest request) {
+        return null;
+    }
+
 }
