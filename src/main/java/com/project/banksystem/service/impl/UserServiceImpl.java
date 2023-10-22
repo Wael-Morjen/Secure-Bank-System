@@ -2,6 +2,7 @@ package com.project.banksystem.service.impl;
 
 import com.project.banksystem.dto.AccountInfo;
 import com.project.banksystem.dto.BankResponse;
+import com.project.banksystem.dto.EmailDetails;
 import com.project.banksystem.dto.UserRequest;
 import com.project.banksystem.entity.User;
 import com.project.banksystem.repository.UserRepository;
@@ -16,6 +17,9 @@ import java.math.BigDecimal;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
@@ -44,6 +48,16 @@ public class UserServiceImpl implements UserService {
                 .status("ACTIVE")
                 .build();
         User savedUser = userRepository.save(newUser);
+        // Send Email alert
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("ACCOUNT CREATION")
+                .messageBody("Congratulations !!!" + " " + savedUser.getFirstName() + " " + savedUser.getLastName() + " Your account has been created.\n" +
+                        "Your account details: \n" +
+                        "Account Name: " + savedUser.getFirstName() + " " + savedUser.getLastName() + "\n" +
+                        "Account Number: " + savedUser.getAccountNumber())
+                .build();
+        emailService.sendEmailAlert(emailDetails);
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
@@ -54,4 +68,6 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .build();
     }
+
+    // TODO: Balance Enquiry, name Enquiry, credit, debit, transfer
 }
