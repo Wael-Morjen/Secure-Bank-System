@@ -18,7 +18,7 @@ public class AccountUtils {
     public static final  String ACCOUNT_DEBIT_SUCCESS_CODE= "007";
     public static final  String ACCOUNT_DEBIT_SUCCESS_MESSAGE= "Account has been successfully debited";
     public static String generateAccountNumber() {
-        /**
+        /*
          * 2023 + randomSixDigits
          */
         Year currentYear = Year.now();

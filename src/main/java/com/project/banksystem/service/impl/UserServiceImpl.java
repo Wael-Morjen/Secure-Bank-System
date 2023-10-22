@@ -21,9 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BankResponse createAccount(UserRequest userRequest) {
-        /**
-         * Creating an account - saving a new user into the DB
-         * Check if a User exist
+        /*
+          Creating an account - saving a new user into the DB
+          Check if a User exist
          */
         if (userRepository.existsByEmail(userRequest.getEmail())) {
             return BankResponse.builder()
