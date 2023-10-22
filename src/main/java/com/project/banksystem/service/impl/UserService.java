@@ -6,6 +6,6 @@ import com.project.banksystem.dto.UserRequest;
 
 public interface UserService {
     BankResponse createAccount(UserRequest userRequest);
-    BankResponse balanceEnquiry(EnquiryRequest enquiryRequest);
+    BankResponse balanceEnquiry(EnquiryRequest request);
     String nameEnquiry(EnquiryRequest request);
 }
