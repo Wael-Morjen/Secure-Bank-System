@@ -166,4 +166,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public BankResponse transfer(TransferRequest transferRequest) {
+        return null;
+    }
+
 }
