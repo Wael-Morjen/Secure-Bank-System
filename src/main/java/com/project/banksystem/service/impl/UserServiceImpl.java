@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Service
-
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
