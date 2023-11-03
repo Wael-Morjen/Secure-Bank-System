@@ -2,20 +2,40 @@ package com.project.banksystem.controller;
 
 import com.project.banksystem.dto.*;
 import com.project.banksystem.service.impl.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@Tag(name = "User Account Management APIs")
 public class UserController {
     @Autowired
     UserService userService;
 
+    @Operation(
+            summary = "Create new user Account",
+            description = "Creating a new user and assigning and account ID"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "HTTP Status 201 CREATED"
+    )
     @PostMapping
     public BankResponse createAccount(@RequestBody UserRequest userRequest) {
         return userService.createAccount(userRequest);
     }
 
+    @Operation(
+            summary = "Balance Enquiry",
+            description = "Given an account number, check the balance of an account"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "HTTP Status 201 SUCCESS"
+    )
     @GetMapping("/balanceEnquiry")
     public BankResponse balanceEnquiry(@RequestBody EnquiryRequest request) {
         return userService.balanceEnquiry(request);
