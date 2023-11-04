@@ -15,9 +15,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 public class TransactionDto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String transactionId;
     private String transactionType;
     private BigDecimal amount;
     private String accountNumber;
