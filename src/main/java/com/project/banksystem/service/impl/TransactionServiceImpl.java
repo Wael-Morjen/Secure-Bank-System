@@ -4,10 +4,11 @@ import com.project.banksystem.dto.TransactionDto;
 import com.project.banksystem.entity.Transaction;
 import com.project.banksystem.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class TransactionServiceImpl implements TransactionService{
+
     @Autowired
      TransactionRepository transactionRepository;
     @Override
