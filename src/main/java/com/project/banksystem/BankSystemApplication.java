@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(
     info = @Info(
-            title = "MyBank Application",
-            description = "Backend REST APIs for MyBank",
+            title = "Native Spring Bank Application",
+            description = "Backend REST APIs for Native Spring Bank",
             version = "v1.0",
             contact = @Contact(
                     name = "Wael Morjen & Malek Bougadouha",
@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
             )
     ),
     externalDocs = @ExternalDocumentation(
-            description = "MyBank App Documentation",
+            description = "Native Spring Bank App Documentation",
             url = "https://github.com/Wael-Morjen/Secure-Bank-System"
     )
 )
