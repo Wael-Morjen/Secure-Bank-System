@@ -17,7 +17,7 @@ public class UserController {
 
     @Operation(
             summary = "Create new user Account",
-            description = "Creating a new user and assigning and account ID"
+            description = "Creating a new user and assigning an account ID"
     )
     @ApiResponse(
             responseCode = "200",
