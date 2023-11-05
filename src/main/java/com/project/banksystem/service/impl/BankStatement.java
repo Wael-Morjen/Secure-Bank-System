@@ -5,6 +5,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.project.banksystem.dto.EmailDetails;
 import com.project.banksystem.entity.Transaction;
 import com.project.banksystem.entity.User;
 import com.project.banksystem.repository.TransactionRepository;
@@ -27,7 +28,8 @@ public class BankStatement {
 
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
-    private static final String FILE = "/home/morgan/Documents/MyBankStatement.pdf";
+    private  EmailService emailService;
+    private static final String FILE = "/home/morgan/Documents/BankStatement.pdf";
     /*
      *  retrieve list of transactions within a date range given an account number
      *  generate a PDF file of transactions
@@ -123,6 +125,15 @@ public class BankStatement {
         document.add(transactionsTable);
 
         document.close();
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(user.getEmail())
+                .subject("STATEMENT OF ACCOUNT")
+                .messageBody("Kindly find your requested account statement attached!!")
+                .attachment(FILE)
+                .build();
+
+        emailService.sendEmailWithPdf(emailDetails);
 
         return transactionList;
     }
