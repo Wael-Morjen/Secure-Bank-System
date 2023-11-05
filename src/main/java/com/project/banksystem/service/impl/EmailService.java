@@ -4,4 +4,5 @@ import com.project.banksystem.dto.EmailDetails;
 
 public interface EmailService {
     void sendEmailAlert (EmailDetails emailDetails);
+    void sendEmailWithPdf(EmailDetails emailDetails);
 }
