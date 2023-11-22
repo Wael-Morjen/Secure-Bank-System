@@ -38,4 +38,15 @@ public class AccountUtils {
         return year + randomNumber;
     }
 
+    public static String generateAccountPin() {
+        /*
+            random 4 digits
+         */
+        int min = 1000;
+        int max = 9999;
+        int pinNumber = (int) Math.floor(Math.random() * (max - min + 1) + min);
+
+        return String.valueOf(pinNumber);
+    }
+
 }
