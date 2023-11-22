@@ -22,6 +22,7 @@ public class Transaction {
     private String transactionId;
     private String transactionType;
     private BigDecimal amount;
+    private String senderReciever;
     private String accountNumber;
     private String status;
     @CreationTimestamp
