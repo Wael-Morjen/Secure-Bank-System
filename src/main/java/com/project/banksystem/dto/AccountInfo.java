@@ -30,6 +30,11 @@ public class AccountInfo {
     private String accountNumber;
 
     @Schema(
+            name = "User pin code (password)"
+    )
+    private String password;
+
+    @Schema(
             name = "User account account status"
     )
     private  String status;
