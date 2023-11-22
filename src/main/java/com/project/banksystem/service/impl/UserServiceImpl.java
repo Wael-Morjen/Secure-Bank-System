@@ -51,6 +51,8 @@ public class UserServiceImpl implements UserService {
                     .accountInfo(null)
                     .build();
         }
+        String pass = AccountUtils.generateAccountPin();
+
         User newUser = User.builder()
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getLastName())
@@ -60,7 +62,7 @@ public class UserServiceImpl implements UserService {
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .accountBalance(BigDecimal.ZERO)
                 .email(userRequest.getEmail())
-                .password(passwordEncoder.encode(userRequest.getPassword()))
+                .password(passwordEncoder.encode(pass))
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternativePhoneNumber(userRequest.getAlternativePhoneNumber())
                 .status("ACTIVE")
@@ -74,8 +76,10 @@ public class UserServiceImpl implements UserService {
                 .messageBody("Congratulations !!!" + " " + savedUser.getFirstName() + " " + savedUser.getLastName() + " Your account has been created.\n" +
                         "Your account details: \n" +
                         "Account Name: " + savedUser.getFirstName() + " " + savedUser.getLastName() + "\n" +
-                        "Account Number: " + savedUser.getAccountNumber())
+                        "Account Number: " + savedUser.getAccountNumber() + "\n" +
+                        "PIN code (password): " + pass)
                 .build();
+
         emailService.sendEmailAlert(emailDetails);
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
@@ -84,6 +88,7 @@ public class UserServiceImpl implements UserService {
                         .accountBalance(savedUser.getAccountBalance())
                         .accountNumber(savedUser.getAccountNumber())
                         .accountName(savedUser.getFirstName() + " " + savedUser.getLastName())
+                        .password(pass)
                         .build())
                 .build();
     }
@@ -262,6 +267,15 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendEmailAlert(debitAlert);
 
+        TransactionDto transactionDebit = TransactionDto.builder()
+                .accountNumber((sourceAccount.getAccountNumber()))
+                .transactionType("DEBIT")
+                .senderReciever(sourceUsername)
+                .amount(request.getAmount())
+                .build();
+
+        transactionService.saveTransaction(transactionDebit);
+
         User destinationAccount = userRepository.findByAccountNumber(request.getDestinationAccountNumber());
         destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(request.getAmount()));
         userRepository.save(destinationAccount);
@@ -274,13 +288,14 @@ public class UserServiceImpl implements UserService {
 
         emailService.sendEmailAlert(creditAlert);
 
-        TransactionDto transactionDto = TransactionDto.builder()
+        TransactionDto transactionCredit = TransactionDto.builder()
                 .accountNumber((destinationAccount.getAccountNumber()))
                 .transactionType("CREDIT")
+                .senderReciever(destinationAccount.getFirstName() + " " + destinationAccount.getLastName())
                 .amount(request.getAmount())
                 .build();
 
-        transactionService.saveTransaction(transactionDto);
+        transactionService.saveTransaction(transactionCredit);
 
         return  BankResponse.builder()
                 .responseCode(AccountUtils.TRANSFER_SUCCESSFUL_CODE)
