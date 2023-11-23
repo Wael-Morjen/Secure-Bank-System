@@ -6,8 +6,13 @@ import com.project.banksystem.entity.Role;
 import com.project.banksystem.entity.User;
 import com.project.banksystem.repository.UserRepository;
 import com.project.banksystem.utils.AccountUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,9 +21,11 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.lang.String;
 
 @Service
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
@@ -231,8 +238,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private String extractSourceAccountNumberFromToken(String token) {
+        // Assuming the token is a JWT
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        // Replace "sourceAccountNumber" with the actual claim key
+        return claims.get("sourceAccountNumber", String.class);
+    }
+
+    @Value("${app.jwt-secret}") // Replace with your actual secret
+    private String jwtSecret;
+
     @Override
-    public BankResponse transfer(TransferRequest request) {
+    public BankResponse transfer(TransferRequest request, HttpHeaders headers) {
         // get the account to debit (check if the account exists)
         // check if the amount debited not more than the account balance
         // debit the account to credit
@@ -247,7 +264,13 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
-        User sourceAccount = userRepository.findByAccountNumber(request.getSourceAccountNumber());
+        // Extract JWT token from headers
+        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
+
+        String sourceAccountNumber = extractSourceAccountNumberFromToken(token);
+
+        User sourceAccount = userRepository.findByAccountNumber(sourceAccountNumber);
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxx" + sourceAccountNumber);
         if (request.getAmount().compareTo(sourceAccount.getAccountBalance()) > 0){
             return BankResponse.builder()
                     .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
