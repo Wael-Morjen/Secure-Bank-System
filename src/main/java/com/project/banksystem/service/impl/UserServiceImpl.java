@@ -105,11 +105,18 @@ public class UserServiceImpl implements UserService {
                 .recipient(loginDto.getEmail())
                 .messageBody("You just logged into your account. If you did not initiate this request, please contact your bank")
                 .build();
-
+        User tmpUser = userRepository.findUserByEmail(loginDto.getEmail());
         emailService.sendEmailAlert(loginAlert);
         return BankResponse.builder()
                 .responseCode("Login Success")
                 .responseMessage(jwtTokenProvider.generateToken(authentication))
+                .accountInfo(AccountInfo.builder()
+                        .accountBalance(tmpUser.getAccountBalance())
+                        .accountNumber(tmpUser.getAccountNumber())
+                        .accountName(tmpUser.getFirstName() + " " + tmpUser.getLastName())
+                        .status(tmpUser.getStatus())
+                        .createdAt(tmpUser.getCreatedAt())
+                        .build())
                 .build();
     }
 
@@ -134,6 +141,7 @@ public class UserServiceImpl implements UserService {
                         .accountBalance(foundUser.getAccountBalance())
                         .accountNumber(request.getAccountNumber())
                         .accountName(foundUser.getFirstName() + " " + foundUser.getLastName())
+                        .createdAt(foundUser.getCreatedAt())
                         .build())
                 .build();
     }
@@ -270,7 +278,7 @@ public class UserServiceImpl implements UserService {
         TransactionDto transactionDebit = TransactionDto.builder()
                 .accountNumber((sourceAccount.getAccountNumber()))
                 .transactionType("DEBIT")
-                .senderReciever(sourceUsername)
+                .senderReciever(sourceAccount.getFirstName()+" "+sourceAccount.getLastName())
                 .amount(request.getAmount())
                 .build();
 
