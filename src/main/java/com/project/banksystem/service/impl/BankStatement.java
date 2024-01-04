@@ -29,7 +29,7 @@ public class BankStatement {
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
     private  EmailService emailService;
-    private static final String FILE = "/home/morgan/Documents/BankStatement.pdf";
+    private static final String FILE = "/home/malek/Documents/BankStatement.pdf";
     /*
      *  retrieve list of transactions within a date range given an account number
      *  generate a PDF file of transactions
