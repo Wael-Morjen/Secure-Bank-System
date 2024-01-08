@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     // Login (auth)
     public BankResponse login(LoginDto loginDto) {
-        Authentication authentication = null;
+        Authentication authentication ;
         authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
