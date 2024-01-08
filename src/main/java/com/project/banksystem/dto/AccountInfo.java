@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -23,4 +24,6 @@ public class AccountInfo {
     private String password;
 
     private  String status;
+
+    private LocalDateTime createdAt;
 }
