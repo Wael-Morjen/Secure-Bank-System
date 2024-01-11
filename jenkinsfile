@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+    environment{
+        DOCKERHUB_CREDENTIALS = credentials('dh_cred')
+    }
+
+    tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        maven "M3"
+    }
+    triggers {
+        pollSCM('*/5 * * * *') // Vérifier toutes les 5 minutes
+    }
+
+    stages {
+        stage('Init'){
+            steps{
+            // Permet l'authentification
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/Wael-Morjen/Secure-Bank-System.git'
+
+                // Run Maven on a Unix agent.
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                    sh 'docker build -t $DOCKERHUB_CREDENTIALS_USR/bank-server:$BUILD_ID .'
+                }
+            }
+        }
+        stage('Deliver'){
+            steps {
+                sh 'docker push $DOCKERHUB_CREDENTIALS_USR/bank-server:$BUILD_ID'
+            }
+        }
+        stage('Cleanup'){
+            steps {
+                sh 'docker rmi $DOCKERHUB_CREDENTIALS_USR/bank-server:$BUILD_ID'
+                sh 'docker logout'
+            }
+        }
+    }
+}
